@@ -14,6 +14,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const [room, setRoom] = React.useState<SfuRoom>();
     const localVideoRef = React.useRef<HTMLVideoElement>(null);
     const [isStarted, setIsStarted] = React.useState(false);
+    // メディアデバイスからローカルのビデオ情報を取得する
     React.useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({ video: true})
@@ -28,6 +29,14 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
                 console.log(e);
             });
     },[]);
+    // 参与構造を取得する関数
+    const getParticipantStatus = () =>{
+        // とりあえずプルダウンで表示して後から非言語情報から計算する
+        const ps = ["話し手","受け手","傍参加者","傍観者"];
+        return 
+        // onChangeを多分使う
+    }
+    // スタートが押されたら動き続ける関数
     const onStart = () => {
         if(peer.current){
             if(!peer.current.open){
@@ -64,6 +73,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         }
         setIsStarted((prev) => !prev);
     };
+    // エンドが押されたら動く
     const onEnd = () => {
         if(room){
             room.close();
@@ -76,6 +86,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         }
         setIsStarted((prev) => !prev);
     };
+    // remoteVideoに置かれている全ての要素でpopsとしてvideoとkeyとしてpeerIdを関数RemoteVideoに送る
     const castVideo = () => {
         return remoteVideo.map((video) => {
             return <RemoteVideo video={video} key={video.peerId} />; 

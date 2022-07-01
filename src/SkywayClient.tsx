@@ -14,6 +14,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const [room, setRoom] = React.useState<SfuRoom>();
     const localVideoRef = React.useRef<HTMLVideoElement>(null);
     const [isStarted, setIsStarted] = React.useState(false);
+    const [localParSta,setLocalParSta] =React.useState("bystander");
     // メディアデバイスからローカルのビデオ情報を取得する
     React.useEffect(() => {
         navigator.mediaDevices
@@ -30,11 +31,19 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             });
     },[]);
     // 参与構造を取得する関数
-    const getParticipantStatus = () =>{
+    const getParticipantStatus = (event: { target: { value: React.SetStateAction<string>; }; }) =>{
         // とりあえずプルダウンで表示して後から非言語情報から計算する
-        const ps = ["話し手","受け手","傍参加者","傍観者"];
-        return 
-        // onChangeを多分使う
+        // eventからvalueを受け取っている設定
+        setLocalParSta(event.target.value);
+    }
+
+    React.useEffect(() => {
+        console.log(localParSta);
+        // 自分の参与役割からビデオウィンドウの大きさを変えていく
+    },[localParSta]);
+
+    const changeParticipantStatus = () => {
+        console.log(localParSta);
     }
     // スタートが押されたら動き続ける関数
     const onStart = () => {
@@ -93,7 +102,16 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         });
     };
     return (
+        
         <div>
+            <form>
+                <select onChange={getParticipantStatus}>
+                    <option value="speaker">話し手</option>
+                    <option value="addressee">受け手</option>
+                    <option value="sideparticipant">傍参加者</option>
+                    <option value="bystander">傍観者</option>
+                </select>
+            </form>
             <button onClick={() => onStart()} disabled={isStarted}>
                 start
             </button>

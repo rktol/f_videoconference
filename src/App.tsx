@@ -6,7 +6,6 @@ import { Room } from "./SkywayClient";
 const App: React.VFC = () =>{
   return (
     <>
-      <div>HELLO</div>
       <Room roomId={"1"} />
     </>
   );

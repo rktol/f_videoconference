@@ -1,6 +1,6 @@
 import Peer, {SfuRoom} from "skyway-js"
 import React from "react";
-// import styled from "styled-components";
+import styled from "styled-components";
 
 import { SKYWAYAPI } from "./env";
 
@@ -8,6 +8,23 @@ type VideoStream = {
     stream: MediaStream;
     peerId: string;
 };
+
+const MyVideo = styled.video<{parsta:string}>`
+    width: ${props => parsta2videosize(props.parsta)}
+`;
+
+const parsta2videosize = (tmp:string) =>{
+    switch(tmp){
+        case 'speaker':
+            return '100%'
+        case 'addressee':
+            return '75%'
+        case 'sideparticipant':
+            return '50%'
+        default :
+            return '25%'
+    }
+}
 
 export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const peer = React.useRef(new Peer({ key: SKYWAYAPI as string}));
@@ -44,9 +61,6 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         // 自分の参与役割からビデオウィンドウの大きさを変えていく
     },[localParSta]);
 
-    const changeParticipantStatus = () => {
-        console.log(localParSta);
-    }
     // スタートが押されたら動き続ける関数
     const onStart = () => {
         if(peer.current){
@@ -107,7 +121,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         
         <div>
             <form>
-                <select onChange={getParticipantStatus}>
+                <select onChange={getParticipantStatus} defaultValue={localParSta}>
                     <option value="speaker">話し手</option>
                     <option value="addressee">受け手</option>
                     <option value="sideparticipant">傍参加者</option>
@@ -120,7 +134,9 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             <button onClick={() => onEnd()} disabled={!isStarted}>
                 end
             </button>
-            <video ref={localVideoRef} playsInline></video>
+            {/* <MyVideo> */}
+            <MyVideo ref={localVideoRef} parsta={localParSta} playsInline></MyVideo>
+            {/* </MyVideo> */}
             {castVideo()}
         </div>
     );

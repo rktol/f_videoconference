@@ -15,17 +15,19 @@ const MyVideo = styled.video<{parsta:string}>`
 `;
 
 const parsta2videosize = (tmp:string) =>{
+    // 個々の大きさをどうするか相談したい
     switch(tmp){
         case 'speaker':
-            return '100%'
+            return '40%'
         case 'addressee':
-            return '75%'
-        case 'sideparticipant':
-            return '50%'
-        default :
             return '25%'
+        case 'sideparticipant':
+            return '20%'
+        default :
+            return '10%'
     }
 }
+
 
 export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const peer = React.useRef(new Peer({ key: SKYWAYAPI as string}));
@@ -37,6 +39,10 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const [localParSta,setLocalParSta] =React.useState("bystander");
     // メディアデバイスからローカルのビデオ情報を取得する
     React.useEffect(() => {
+        initLocalVideo();
+    },[]);
+
+    const initLocalVideo = () =>{
         navigator.mediaDevices
             .getUserMedia({ video: true})
             .then((stream) => {
@@ -49,14 +55,42 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             .catch((e) => {
                 console.log(e);
             });
-    },[]);
+    }
     // 参与構造を取得する関数
     const getParticipantStatus = (event: { target: { value: React.SetStateAction<string>; }; }) =>{
-        // とりあえずプルダウンで表示して後から非言語情報から計算する
-        // eventからvalueを受け取っている設定
+        // プルダウンから参与構造を取得
         setLocalParSta(event.target.value);
+    }
 
+    const addRemoteStream = (stream:MediaStream,peerId:string,parsta:string) =>{
+        setRemoteVideo((prev) => [
+            ...prev,
+            { stream:stream, peerId:peerId, participantStatus:parsta}
+        ]);
+    }
 
+    const changeParticipantStatus = (peerId:string,parsta:string)=>{
+        setRemoteVideo((prev) => {
+            return prev.map((video)=>{
+                if (video.peerId === peerId){
+                    return {stream: video.stream, peerId: video.peerId, participantStatus:parsta};
+                }else{
+                    return video;
+                }
+            });
+        });
+    }
+
+    const sortRemoteVideo=()=>{
+        setRemoteVideo((prev)=>{
+            return prev.sort((a,b)=>{
+                if(a.peerId < b.peerId){
+                    return 1;
+                }else{
+                    return -1;
+                };
+            });
+        });
     }
 
     React.useEffect(() => {
@@ -64,6 +98,8 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         if(room){
             room.send(localParSta);
         }
+        // remoteVideoの自分のparstaを変更する
+        changeParticipantStatus(peer.current.id,localParSta);
     },[localParSta]);
 
     // スタートが押されたら動き続ける関数
@@ -78,28 +114,27 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             });
             tmpRoom.once("open", ()=>{
                 console.log("=== You joined ===\n");
+                // Startが押されるとremoteVideoにlocalを入れて
+                if(localStream){
+                    addRemoteStream(localStream,peer.current.id,localParSta);
+                }
             });
             tmpRoom.on("peerJoin",(peerId)=>{
                 console.log(`=== ${peerId} joined === \n}`);
-
             });
             tmpRoom.on("stream", async (stream) => {
-                setRemoteVideo((prev) => [
-                    ...prev,
-                    { stream: stream, peerId: stream.peerId, participantStatus:"bystander"}
-                ]);
+                // streamを受信したらstreamとpeerId,participantStatusをsetRemoteVideoする
+                addRemoteStream(stream,stream.peerId,"bystander");
+                // setRemoteVideoを並び変える
+                sortRemoteVideo();
+                // 現在のParticipationStatusを新規参加者に送る
+                if(room){
+                    room.send(localParSta);
+                }
             });
             tmpRoom.on("data",({src,data}) => {
                 // data（参与役割）を受信したらsetRemoteVidoeを更新する
-                setRemoteVideo((prev) => {
-                    return prev.map((video)=>{
-                        if (video.peerId === src){
-                            return {stream: video.stream, peerId: video.peerId, participantStatus:data};
-                        }else{
-                            return video;
-                        }
-                    });
-                });
+                changeParticipantStatus(src,data);
             });
             tmpRoom.on("peerLeave",(peerId) => {
                 setRemoteVideo((prev) => {
@@ -120,6 +155,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const onEnd = () => {
         if(room){
             room.close();
+            // RemoteVideoを全部空にする
             setRemoteVideo((prev) => {
                 return prev.filter((video) =>{
                     video.stream.getTracks().forEach((track) => track.stop());
@@ -127,6 +163,8 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
                 });
             });
         }
+        // roomが切れたらlocalのplayを再開する
+        initLocalVideo();
         setIsStarted((prev) => !prev);
     };
     // remoteVideoに置かれている全ての要素でpopsとしてvideoとkeyとしてpeerIdを関数RemoteVideoに送る
@@ -149,10 +187,11 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             <button onClick={() => onStart()} disabled={isStarted}>
                 start
             </button>
-            <button onClick={() => onEnd()} disabled={!isStarted}>
+            {/* <button onClick={() => onEnd()} disabled={!isStarted}> */}
+            <button onClick={() => onEnd()} disabled={true}>
                 end
             </button>
-            <MyVideo ref={localVideoRef} parsta={localParSta} playsInline></MyVideo>
+            <MyVideo ref={localVideoRef} parsta={localParSta} style={{display:(isStarted?'none':'block')}} playsInline></MyVideo>
             {castVideo()}
         </div>
     );

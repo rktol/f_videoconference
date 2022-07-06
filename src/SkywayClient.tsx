@@ -58,7 +58,6 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
 
     React.useEffect(() => {
         console.log(localParSta);
-        // 自分の参与役割からビデオウィンドウの大きさを変えていく
     },[localParSta]);
 
     // スタートが押されたら動き続ける関数
@@ -73,11 +72,14 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             });
             tmpRoom.once("open", ()=>{
                 console.log("=== You joined ===\n");
+                // ルームにjoinしたときに参与役割の初期値をデータとして送信する
             });
             tmpRoom.on("peerJoin",(peerId)=>{
                 console.log(`=== ${peerId} joined === \n}`);
+
             });
             tmpRoom.on("stream", async (stream) => {
+                // setRemoteVideoにpeerIdから参照した
                 setRemoteVideo((prev) => [
                     ...prev,
                     { stream: stream, peerId: stream.peerId}
@@ -121,7 +123,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         
         <div>
             <form>
-                <select onChange={getParticipantStatus} defaultValue={localParSta}>
+                <select onChange={getParticipantStatus} defaultValue={localParSta} disabled={!isStarted}>
                     <option value="speaker">話し手</option>
                     <option value="addressee">受け手</option>
                     <option value="sideparticipant">傍参加者</option>
@@ -134,9 +136,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             <button onClick={() => onEnd()} disabled={!isStarted}>
                 end
             </button>
-            {/* <MyVideo> */}
             <MyVideo ref={localVideoRef} parsta={localParSta} playsInline></MyVideo>
-            {/* </MyVideo> */}
             {castVideo()}
         </div>
     );

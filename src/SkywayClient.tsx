@@ -7,6 +7,7 @@ import { SKYWAYAPI } from "./env";
 type VideoStream = {
     stream: MediaStream;
     peerId: string;
+    participantStatus: string;
 };
 
 const MyVideo = styled.video<{parsta:string}>`
@@ -54,10 +55,15 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         // とりあえずプルダウンで表示して後から非言語情報から計算する
         // eventからvalueを受け取っている設定
         setLocalParSta(event.target.value);
+
+
     }
 
     React.useEffect(() => {
         console.log(localParSta);
+        if(room){
+            room.send(localParSta);
+        }
     },[localParSta]);
 
     // スタートが押されたら動き続ける関数
@@ -72,18 +78,28 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             });
             tmpRoom.once("open", ()=>{
                 console.log("=== You joined ===\n");
-                // ルームにjoinしたときに参与役割の初期値をデータとして送信する
             });
             tmpRoom.on("peerJoin",(peerId)=>{
                 console.log(`=== ${peerId} joined === \n}`);
 
             });
             tmpRoom.on("stream", async (stream) => {
-                // setRemoteVideoにpeerIdから参照した
                 setRemoteVideo((prev) => [
                     ...prev,
-                    { stream: stream, peerId: stream.peerId}
+                    { stream: stream, peerId: stream.peerId, participantStatus:"bystander"}
                 ]);
+            });
+            tmpRoom.on("data",({src,data}) => {
+                // data（参与役割）を受信したらsetRemoteVidoeを更新する
+                setRemoteVideo((prev) => {
+                    return prev.map((video)=>{
+                        if (video.peerId === src){
+                            return {stream: video.stream, peerId: video.peerId, participantStatus:data};
+                        }else{
+                            return video;
+                        }
+                    });
+                });
             });
             tmpRoom.on("peerLeave",(peerId) => {
                 setRemoteVideo((prev) => {
@@ -151,5 +167,5 @@ const RemoteVideo = (props: {video: VideoStream}) => {
             videoRef.current.play().catch((e) => console.log(e));
         }
     },[props.video]);
-    return <video ref={videoRef} playsInline></video>
+    return <MyVideo ref={videoRef} parsta={props.video.participantStatus} playsInline></MyVideo>
 };

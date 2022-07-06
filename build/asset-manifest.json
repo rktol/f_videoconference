@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.073c9b0a.css",
-    "main.js": "/static/js/main.59fcffb7.js",
-    "static/js/787.b9ecde15.chunk.js": "/static/js/787.b9ecde15.chunk.js",
-    "index.html": "/index.html",
-    "main.073c9b0a.css.map": "/static/css/main.073c9b0a.css.map",
-    "main.59fcffb7.js.map": "/static/js/main.59fcffb7.js.map",
-    "787.b9ecde15.chunk.js.map": "/static/js/787.b9ecde15.chunk.js.map"
+    "main.css": "/f_videoconference/static/css/main.073c9b0a.css",
+    "main.js": "/f_videoconference/static/js/main.64162001.js",
+    "static/js/787.b9ecde15.chunk.js": "/f_videoconference/static/js/787.b9ecde15.chunk.js",
+    "index.html": "/f_videoconference/index.html",
+    "main.073c9b0a.css.map": "/f_videoconference/static/css/main.073c9b0a.css.map",
+    "main.64162001.js.map": "/f_videoconference/static/js/main.64162001.js.map",
+    "787.b9ecde15.chunk.js.map": "/f_videoconference/static/js/787.b9ecde15.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.59fcffb7.js"
+    "static/js/main.64162001.js"
   ]
 }

@@ -10,21 +10,48 @@ type VideoStream = {
     participantStatus: string;
 };
 
-const MyVideo = styled.video<{parsta:string}>`
-    width: ${props => parsta2videosize(props.parsta)}
+const MyVideo = styled.video<{parsta:string, num:number, len:number}>`
+    position: absolute;
+    width: ${props => calcVideosize(props.parsta)};
+    left: calc((50% - ${props => calcVideosize(props.parsta)}/2) + (${props => calcRadius(props.parsta)}*${props => calcSin(props.num,props.len)}));
+    top : calc((50% - ${props => calcVideosize(props.parsta)}/2) + (${props => calcRadius(props.parsta)}*${props => calcCos(props.num,props.len)}));
 `;
 
-const parsta2videosize = (tmp:string) =>{
+const Area = styled.div`
+    position: ralative;
+    width: 100%;
+    height 80%;
+    border: 1px solid black;
+`
+
+const calcCos = (num:number,len:number) =>{
+    return Math.cos(num*2*Math.PI / len);
+}
+
+const calcSin = (num:number,len:number) =>{
+    return Math.sin(num*2*Math.PI / len);
+}
+
+
+const calcRadius = (tmp:string) =>{
+    if(tmp === 'bystander'){
+        return '30%';
+    }else{
+        return '15%';
+    }
+}
+
+const calcVideosize = (tmp:string) =>{
     // 個々の大きさをどうするか相談したい
     switch(tmp){
         case 'speaker':
-            return '40%'
-        case 'addressee':
-            return '25%'
-        case 'sideparticipant':
             return '20%'
-        default :
+        case 'addressee':
+            return '15%'
+        case 'sideparticipant':
             return '10%'
+        default :
+            return '5%'
     }
 }
 
@@ -169,8 +196,8 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     };
     // remoteVideoに置かれている全ての要素でpopsとしてvideoとkeyとしてpeerIdを関数RemoteVideoに送る
     const castVideo = () => {
-        return remoteVideo.map((video) => {
-            return <RemoteVideo video={video} key={video.peerId} />; 
+        return remoteVideo.map((video,index) => {
+            return <RemoteVideo video={video} index={index} length={remoteVideo.length}key={video.peerId} />; 
         });
     };
     return (
@@ -191,13 +218,15 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             <button onClick={() => onEnd()} disabled={true}>
                 end
             </button>
-            <MyVideo ref={localVideoRef} parsta={localParSta} style={{display:(isStarted?'none':'block')}} playsInline></MyVideo>
+            <MyVideo ref={localVideoRef} parsta={localParSta} num={1} len={1} style={{display:(isStarted?'none':'block')}} playsInline></MyVideo>
+            <Area>
             {castVideo()}
+            </Area>
         </div>
     );
 };
 
-const RemoteVideo = (props: {video: VideoStream}) => {
+const RemoteVideo = (props: {video: VideoStream,index:number,length:number}) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
 
     React.useEffect(() => {
@@ -206,5 +235,5 @@ const RemoteVideo = (props: {video: VideoStream}) => {
             videoRef.current.play().catch((e) => console.log(e));
         }
     },[props.video]);
-    return <MyVideo ref={videoRef} parsta={props.video.participantStatus} playsInline></MyVideo>
+    return <MyVideo ref={videoRef} parsta={props.video.participantStatus} num={props.index} len={props.length} playsInline></MyVideo>
 };

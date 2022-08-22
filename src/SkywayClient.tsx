@@ -45,11 +45,11 @@ const calcVideosize = (tmp:string) =>{
     // 個々の大きさをどうするか相談したい
     switch(tmp){
         case 'speaker':
-            return '20%'
-        case 'addressee':
             return '15%'
+        case 'addressee':
+            return '11%'
         case 'sideparticipant':
-            return '10%'
+            return '8%'
         default :
             return '5%'
     }

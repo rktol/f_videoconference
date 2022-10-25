@@ -23,24 +23,25 @@ export const faceNormalize = (result:Results):NormalizedLandmarkList => {
             tmp[i].y -= center.y
             tmp[i].z -= center.z 
         }
-
-        return tmp
-    }else{
-        return tmp
     }
+    return tmp
+    
 }
 
 const faceCenter = (face:NormalizedLandmarkList):NormalizedLandmark =>{
     let c:NormalizedLandmark={x:0,y:0,z:0};
-    for(let j=0; j<face.length;j++){
-        c.x += face[j].x
-        c.y += face[j].y
-        c.z += face[j].z
-    }
 
-    c.x /= face.length
-    c.y /= face.length
-    c.z /= face.length
+    if(face){
+        for(let j=0; j<face.length;j++){
+            c.x += face[j].x
+            c.y += face[j].y
+            c.z += face[j].z
+        }
+
+        c.x /= face.length
+        c.y /= face.length
+        c.z /= face.length
+    }
 
     return c;
 }

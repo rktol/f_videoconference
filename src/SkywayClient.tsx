@@ -1,7 +1,6 @@
 import Peer, {SfuRoom} from "skyway-js"
 import React from "react";
 import styled from "styled-components";
-// import { Results, NormalizedLandmark, NormalizedLandmarkList,Holistic } from '@mediapipe/holistic';
 
 
 import { SKYWAYAPI } from "./env";
@@ -58,7 +57,7 @@ const calcVideosize = (tmp:string) =>{
 }
 
 
-export const Room: React.VFC<{roomId: string}> =({roomId}) => {
+export const Room: React.VFC<{roomId: string,ownStatus:string}> =({roomId,ownStatus}) => {
     const peer = React.useRef(new Peer({ key: SKYWAYAPI as string}));
     const [remoteVideo, setRemoteVideo] = React.useState<VideoStream[]>([]);
     const [localStream, setLocalStream] = React.useState<MediaStream>();
@@ -85,10 +84,20 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
                 console.log(e);
             });
     }
-    // 参与構造を取得する関数
-    const getParticipantStatus = (event: { target: { value: React.SetStateAction<string>; }; }) =>{
-        // プルダウンから参与構造を取得
-        setLocalParSta(event.target.value);
+
+    React.useEffect(() =>{
+        console.log(ownStatus)
+        getParticipantStatus(ownStatus)
+    },[ownStatus])
+
+    // プルダウンから参与構造を取得
+    // const getParticipantStatus = (event: { target: { value: React.SetStateAction<string>; }; }) =>{
+        // setLocalParSta(event.target.value);
+    // }    
+
+    // countStatusから参与構造を取得する関数
+    const getParticipantStatus = (countstatus:string) =>{
+        setLocalParSta(countstatus)
     }
 
     const addRemoteStream = (stream:MediaStream,peerId:string,parsta:string) =>{
@@ -205,14 +214,14 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     return (
         
         <div>
-            <form>
+            {/* <form>
                 <select onChange={getParticipantStatus} defaultValue={localParSta} disabled={!isStarted}>
                     <option value="speaker">話し手</option>
                     <option value="addressee">受け手</option>
                     <option value="sideparticipant">傍参加者</option>
                     <option value="bystander">傍観者</option>
                 </select>
-            </form>
+            </form> */}
             <button onClick={() => onStart()} disabled={isStarted}>
                 start
             </button>

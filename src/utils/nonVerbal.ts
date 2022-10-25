@@ -96,7 +96,6 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
           console.log("頷きました+15")
         }
     }
-    console.log("計算しました："+count)
     return count
 }
 

@@ -18,6 +18,7 @@ const App: React.VFC = () =>{
   const [isHands, setIsHands] = React.useState<InitiationHands>({right:1,left:1});
   let nod = [0,0,0]
   let count = 0
+  let ParticipantStatus:string = "bystander"
 
    /**
    * 検出結果（フレーム毎に呼び出される）
@@ -40,14 +41,21 @@ const App: React.VFC = () =>{
         count = detectItem(results,count,conHands,nod)
       }
       
-      // count -= 0.5
+      count -= 0.5
       
       if(count < 0){
         count=0
       }else if(count > 101){
         count=100
       }
-      console.log("現在のスコア："+count)
+
+      if(count < 50 && ParticipantStatus != "bystander"){
+        ParticipantStatus = "bystander"
+      }else if(count >= 50 && ParticipantStatus != "sideparticipant"){
+        ParticipantStatus = "sideparticipant"
+      }
+
+      console.log("現在のスコア："+count+"->"+ParticipantStatus)
     },[])
 
     useEffect(() => {
@@ -126,11 +134,18 @@ const App: React.VFC = () =>{
 
     </div>
     <>
-      <Room roomId={"1"} />
+      <Room roomId={"1"} ownStatus={ParticipantStatus}/>
     </>
+    <OutputLog t={ParticipantStatus}/>
     </>
   );
 };
+
+
+const OutputLog = (props:{t:string}) =>{
+  console.log(props.t)
+  return <></>
+}
 
 export default App;
 

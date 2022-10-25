@@ -1,6 +1,8 @@
 import Peer, {SfuRoom} from "skyway-js"
 import React from "react";
 import styled from "styled-components";
+// import { Results, NormalizedLandmark, NormalizedLandmarkList,Holistic } from '@mediapipe/holistic';
+
 
 import { SKYWAYAPI } from "./env";
 

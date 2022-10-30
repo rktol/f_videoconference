@@ -1,9 +1,11 @@
 import Peer, {SfuRoom} from "skyway-js"
 import React from "react";
 import styled from "styled-components";
+import {MediaPipe} from "./MediaPipeScript";
 
 
-import { SKYWAYAPI } from "./env";
+
+import { SKYWAYAPI } from "../env";
 
 type VideoStream = {
     stream: MediaStream;
@@ -57,7 +59,7 @@ const calcVideosize = (tmp:string) =>{
 }
 
 
-export const Room: React.VFC<{roomId: string,ownStatus:string}> =({roomId,ownStatus}) => {
+export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const peer = React.useRef(new Peer({ key: SKYWAYAPI as string}));
     const [remoteVideo, setRemoteVideo] = React.useState<VideoStream[]>([]);
     const [localStream, setLocalStream] = React.useState<MediaStream>();
@@ -85,18 +87,13 @@ export const Room: React.VFC<{roomId: string,ownStatus:string}> =({roomId,ownSta
             });
     }
 
-    React.useEffect(() =>{
-        console.log(ownStatus)
-        getParticipantStatus(ownStatus)
-    },[ownStatus])
-
     // プルダウンから参与構造を取得
     // const getParticipantStatus = (event: { target: { value: React.SetStateAction<string>; }; }) =>{
         // setLocalParSta(event.target.value);
     // }    
 
     // countStatusから参与構造を取得する関数
-    const getParticipantStatus = (countstatus:string) =>{
+    function getParticipantStatus(countstatus:string){
         setLocalParSta(countstatus)
     }
 
@@ -132,7 +129,7 @@ export const Room: React.VFC<{roomId: string,ownStatus:string}> =({roomId,ownSta
     }
 
     React.useEffect(() => {
-        console.log(localParSta);
+        // console.log(localParSta);
         if(room){
             room.send(localParSta);
         }
@@ -212,27 +209,32 @@ export const Room: React.VFC<{roomId: string,ownStatus:string}> =({roomId,ownSta
         });
     };
     return (
-        
         <div>
-            {/* <form>
-                <select onChange={getParticipantStatus} defaultValue={localParSta} disabled={!isStarted}>
-                    <option value="speaker">話し手</option>
-                    <option value="addressee">受け手</option>
-                    <option value="sideparticipant">傍参加者</option>
-                    <option value="bystander">傍観者</option>
-                </select>
-            </form> */}
-            <button onClick={() => onStart()} disabled={isStarted}>
-                start
-            </button>
-            {/* <button onClick={() => onEnd()} disabled={!isStarted}> */}
-            <button onClick={() => onEnd()} disabled={true}>
-                end
-            </button>
-            <MyVideo ref={localVideoRef} parsta={localParSta} num={1} len={1} style={{display:(isStarted?'none':'block')}} playsInline></MyVideo>
-            <Area>
-            {castVideo()}
-            </Area>
+            <div>
+                {/* <form>
+                    <select onChange={getParticipantStatus} defaultValue={localParSta} disabled={!isStarted}>
+                        <option value="speaker">話し手</option>
+                        <option value="addressee">受け手</option>
+                        <option value="sideparticipant">傍参加者</option>
+                        <option value="bystander">傍観者</option>
+                    </select>
+                </form> */}
+                <button onClick={() => onStart()} disabled={isStarted}>
+                    start
+                </button>
+                {/* <button onClick={() => onEnd()} disabled={!isStarted}> */}
+                <button onClick={() => onEnd()} disabled={true}>
+                    end
+                </button>
+                <MyVideo ref={localVideoRef} parsta={localParSta} num={1} len={1} style={{display:(isStarted?'none':'block')}} playsInline>
+                </MyVideo>
+                <Area>
+                {castVideo()}
+                </Area>
+                {/* 子コンポーネントに送りたい */}
+                <MediaPipe  getParticipantStatus = {getParticipantStatus}/>
+                {/* <MediaPipe /> */}
+            </div>
         </div>
     );
 };

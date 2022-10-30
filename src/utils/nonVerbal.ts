@@ -1,4 +1,4 @@
-import { POSE_CONNECTIONS, FACEMESH_TESSELATION, HAND_CONNECTIONS, Results, NormalizedLandmark, NormalizedLandmarkList } from '@mediapipe/holistic';
+import { Results, NormalizedLandmarkList } from '@mediapipe/holistic';
 import {faceNormalize} from './faceMesh';
 
 /**
@@ -66,28 +66,18 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
     let face:NormalizedLandmarkList = faceNormalize(results)
     const display_x = 0.012
     const display_y = 0.01
+    let face_x = 0
+    let face_y = 0
+    if(face){
+        face_x = face[1].x/display_x
+        face_y = face[1].y/display_y
+    }
 
-    let face_x = face[1].x/display_x
-    let face_y = face[1].y/display_y
 
     if(face_y < 1/2 && Math.abs(face_x) < 1/3){
         console.log("特定の方向を向いています+2")
         count += 1
     }
-
-    // if(face_y < 1/2){
-    //     console.log("上")
-    // }else{
-    //     console.log("下")
-    // }
-    // if(Math.abs(face_x) < 1/3){
-    //     console.log("2")
-    // }else if(face_x > 1/3){
-    //     console.log("1")
-    // }else{
-    //     console.log("3")
-    // }
-    // console.log(face[1].x+":"+face[1].y)
 
     // 毎フレーム頷きを計測するための動作
     if(results.faceLandmarks){
@@ -96,6 +86,12 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
           console.log("頷きました+15")
         }
     }
+
+    // 顔がない時にカウントを0にする
+    if(!results.faceLandmarks){
+        count = 0
+    }
+
     return count
 }
 

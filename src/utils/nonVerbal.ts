@@ -71,16 +71,17 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
     if(face){
         let rad = Math.atan2(face[1].y,face[1].x)
         deg = rad * (180/Math.PI)
-        deg = (deg - 90)*-1
+        deg = (deg - 90)
         if(deg < 0){
             deg = deg + 360
         }
+        console.log(deg)
         faceposition=whereFace(deg,participants.length)
 
         // 方向のテスト
         // faceposition=whereFace(deg,6)
         // let statusArray:string[] = ["sideparticipant","addressee","speaker","bystander","sideparticipant","bystander"]
-        // console.log("参加者"+faceposition+"("+statusArray[faceposition]+")を向いています")
+        console.log("参加者"+faceposition+"("+participants[faceposition]+")を向いています")
         
     }
 
@@ -115,7 +116,7 @@ export const nodCount = (nod:number[]):boolean =>{
 }
 
 const whereFace = (deg:number,length:number):number => {
-    // 軸↓←　0 < deg < 359
+    // 軸↓→　0 < deg < 359
     const theta = 360 / length
 
     let tmp = Math.floor((deg+(theta/2))/theta)

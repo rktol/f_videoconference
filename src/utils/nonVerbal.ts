@@ -21,9 +21,9 @@ export const InitHand = (result:Results,conHands:InitiationHands):InitiationHand
     return conHands;
 }
 
-export const detectItem = (results: Results,count:number,hands: InitiationHands,nod:number[]):number => {
+export const detectItem = (results: Results,count:number,hands: InitiationHands,nod:number[],participants:string[]):number => {
+    // console.log(participants)
     // 挙手判定
-
     // 左手
     if(results.leftHandLandmarks){
         let dist = Math.sqrt(Math.pow(results.leftHandLandmarks[0].x - results.leftHandLandmarks[12].x, 2) + Math.pow(results.leftHandLandmarks[0].y - results.leftHandLandmarks[12].y, 2));
@@ -63,20 +63,25 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
 
     // 顔向き判定
     // ヨコｘ＝±0.006 縦　0~0.01
+    // ↓←(＋)、↑→(-)
     let face:NormalizedLandmarkList = faceNormalize(results)
-    const display_x = 0.012
-    const display_y = 0.01
-    let face_x = 0
-    let face_y = 0
+    let deg = 0
+    let faceposition=0
+
     if(face){
-        face_x = face[1].x/display_x
-        face_y = face[1].y/display_y
-    }
+        let rad = Math.atan2(face[1].y,face[1].x)
+        deg = rad * (180/Math.PI)
+        deg = (deg - 90)*-1
+        if(deg < 0){
+            deg = deg + 360
+        }
+        faceposition=whereFace(deg,participants.length)
 
-
-    if(face_y < 1/2 && Math.abs(face_x) < 1/3){
-        console.log("特定の方向を向いています+2")
-        count += 1
+        // 方向のテスト
+        // faceposition=whereFace(deg,6)
+        // let statusArray:string[] = ["sideparticipant","addressee","speaker","bystander","sideparticipant","bystander"]
+        // console.log("参加者"+faceposition+"("+statusArray[faceposition]+")を向いています")
+        
     }
 
     // 毎フレーム頷きを計測するための動作
@@ -87,6 +92,12 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         }
     }
 
+    // 仮置き参加メンバーの参与役割から視線を把握
+    if(participants[faceposition] == "speaker"){
+        count = count + 1
+        console.log("Speakerを見ています")
+    }
+    
     // 顔がない時にカウントを0にする
     if(!results.faceLandmarks){
         count = 0
@@ -101,4 +112,13 @@ export const nodCount = (nod:number[]):boolean =>{
     }else{
         return false
     }
+}
+
+const whereFace = (deg:number,length:number):number => {
+    // 軸↓←　0 < deg < 359
+    const theta = 360 / length
+
+    let tmp = Math.floor((deg+(theta/2))/theta)
+    if(tmp == length)tmp=0
+    return tmp
 }

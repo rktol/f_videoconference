@@ -2,9 +2,6 @@ import Peer, {SfuRoom} from "skyway-js"
 import React from "react";
 import styled from "styled-components";
 import {MediaPipe} from "./MediaPipeScript";
-
-
-
 import { SKYWAYAPI } from "../env";
 
 type VideoStream = {
@@ -67,6 +64,8 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const localVideoRef = React.useRef<HTMLVideoElement>(null);
     const [isStarted, setIsStarted] = React.useState(false);
     const [localParSta,setLocalParSta] =React.useState("bystander");
+    const [statusArray,setStatusArray] =React.useState<string[]>([]);
+
     // メディアデバイスからローカルのビデオ情報を取得する
     React.useEffect(() => {
         initLocalVideo();
@@ -87,16 +86,12 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
             });
     }
 
-    // プルダウンから参与構造を取得
-    // const getParticipantStatus = (event: { target: { value: React.SetStateAction<string>; }; }) =>{
-        // setLocalParSta(event.target.value);
-    // }    
-
     // countStatusから参与構造を取得する関数
     function getParticipantStatus(countstatus:string){
         setLocalParSta(countstatus)
     }
 
+    // 新規参加者がいたときにStreamを追加する
     const addRemoteStream = (stream:MediaStream,peerId:string,parsta:string) =>{
         setRemoteVideo((prev) => [
             ...prev,
@@ -104,6 +99,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         ]);
     }
 
+    // 参与役割の変化を受信したときにRemoteVideoに設定
     const changeParticipantStatus = (peerId:string,parsta:string)=>{
         setRemoteVideo((prev) => {
             return prev.map((video)=>{
@@ -116,6 +112,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         });
     }
 
+    // RemoteVideoをPeerId昇順に設定
     const sortRemoteVideo=()=>{
         setRemoteVideo((prev)=>{
             return prev.sort((a,b)=>{
@@ -128,14 +125,25 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         });
     }
 
+    // MediaPipeに送信するための参与役割の配列を設定
+    const getStatusArray=()=>{
+        setStatusArray(remoteVideo.map((value)=>{
+            return value.participantStatus
+        }))
+        // console.log(statusArray)
+    }
+
     React.useEffect(() => {
-        // console.log(localParSta);
         if(room){
             room.send(localParSta);
         }
         // remoteVideoの自分のparstaを変更する
         changeParticipantStatus(peer.current.id,localParSta);
     },[localParSta]);
+
+    React.useEffect(() => {
+        getStatusArray();
+    },[remoteVideo])
 
     // スタートが押されたら動き続ける関数
     const onStart = () => {
@@ -186,6 +194,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         }
         setIsStarted((prev) => !prev);
     };
+
     // エンドが押されたら動く
     const onEnd = () => {
         if(room){
@@ -202,12 +211,18 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         initLocalVideo();
         setIsStarted((prev) => !prev);
     };
+
     // remoteVideoに置かれている全ての要素でpopsとしてvideoとkeyとしてpeerIdを関数RemoteVideoに送る
     const castVideo = () => {
         return remoteVideo.map((video,index) => {
             return <RemoteVideo video={video} index={index} length={remoteVideo.length}key={video.peerId} />; 
         });
     };
+
+    const mediaPipeOn = () => {
+        return <MediaPipe  getParticipantStatus = {getParticipantStatus} participantsStatus ={statusArray}/>;
+    }
+
     return (
         <div>
             <div>
@@ -232,7 +247,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
                 {castVideo()}
                 </Area>
                 {/* 子コンポーネントに送りたい */}
-                <MediaPipe  getParticipantStatus = {getParticipantStatus}/>
+                {mediaPipeOn()}
                 {/* <MediaPipe /> */}
             </div>
         </div>

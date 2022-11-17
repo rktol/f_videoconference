@@ -5,10 +5,10 @@ import Webcam from 'react-webcam';
 import { css } from '@emotion/css';
 import { Camera } from '@mediapipe/camera_utils';
 import { Holistic, Results, ResultsListener } from '@mediapipe/holistic';
-import { detectItem, InitHand, InitiationHands } from './nonVerbal';
+import { detectItem, InitHand, InitiationHands, CountAndDetection } from './nonVerbal';
 
 // export const MediaPipe = (props: {parsta:string}) =>{
-export const MediaPipe: React.VFC<{ getParticipantStatus: Function, participantsStatus: string[] }> = ({ getParticipantStatus, participantsStatus }) => {
+export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFace: Function, participantsStatus: string[], addressee: boolean }> = ({ getParticipantStatus, getSpeakerFace, participantsStatus, addressee }) => {
 
   const webcamRef = useRef<Webcam>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -19,12 +19,16 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, participants
   let [isParticipantStatus, setIsParticipantStatus] = React.useState<string>("bystander")
   let [participants, setParticipants] = React.useState<string[]>([])
   const [tmpResults, setTmpResults] = React.useState<Results>()
+  const [whoFace, setWhoFace] = React.useState<number>(0)
+  const [speakerFace,setSpeakerFace] = React.useState<number>(-1)
+  const [isSpeaker, setIsSpeaker] = React.useState<boolean>(false)
+  const [isAddressee, setIsAddressee] = React.useState<boolean>(false)
 
   /**
   * 検出結果（フレーム毎に呼び出される）
   * @param results
   */
-  
+
   // Holisticを起動したときにひたすら回り続ける
   const onResults: ResultsListener = (results: Results): void => {
     resultsRef.current = results
@@ -33,56 +37,92 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, participants
 
   // onResultsでTmpResultsが変更されたときに毎回動き、countを算出して自らの参与役割を決定
   React.useEffect(() => {
-  
+
     // 頷きのためのnod関数
     if (tmpResults && tmpResults.faceLandmarks) {
       nod.push(tmpResults.faceLandmarks[1].y)
       nod.shift()
     }
 
-    
+
     let conHands = isHands
+    let tmp: CountAndDetection
     let tmpcount = count
+
     // 非言語情報からcountを算出する
     if (conHands && tmpResults) {
-      tmpcount = detectItem(tmpResults, count, conHands, nod, participants)
+      tmp = detectItem(tmpResults, count, conHands, nod, participants)
+      tmpcount = tmp.nblCount
+      // 誰を向いているか
+      setWhoFace(tmp.faceDetection)
     }
-  
-    tmpcount = tmpcount - 0.5
-
-    if (tmpcount < 0) {
-      tmpcount = 0
-    } else if (tmpcount > 101) {
-      tmpcount = 100
-    }
-
-    setCount(tmpcount)
 
     // speaker,adresserは仮置き
-    if (count > 90) {
+    if (isSpeaker) {
       setIsParticipantStatus("speaker")
-    } else if (count > 80) {
-      setIsParticipantStatus("addressee")
-    } else if (count > 50) {
-      setIsParticipantStatus("sideparticipant")
-    } else if (count <= 50) {
-      setIsParticipantStatus("bystander")
-    }
+    } else {
 
-    console.log("現在のスコア：" + count)
+      tmpcount = tmpcount - 0.5
+
+      if (tmpcount < 0) {
+        tmpcount = 0
+      } else if (tmpcount > 101) {
+        tmpcount = 100
+      }
+
+      setCount(tmpcount)
+
+      if (isAddressee) {
+        setIsParticipantStatus("addressee")
+      } else {
+        if (count > 50) {
+          setIsParticipantStatus("sideparticipant")
+        } else if (count <= 50) {
+          setIsParticipantStatus("bystander")
+        }
+      }
+      console.log("現在のスコア：" + count)
+    }
 
   }, [tmpResults])
 
   useEffect(() => {
     // console.log('participantsStatus is updated')
     setParticipants(participantsStatus)
+
+    // 話し手が傍参加者をみているか
+    SpeakerFaceAddressee()
   }, [participantsStatus])
+
+  useEffect(() => {
+    // 話し手が傍参加者をみているか
+    SpeakerFaceAddressee()
+  },[whoFace])
+
+  useEffect(() => {
+    setIsAddressee(addressee)
+  }, [addressee])
 
   useEffect(() => {
     // 親コンポーネントからgetLocalparstaが欲しい
     getParticipantStatus(isParticipantStatus)
     console.log("現在の参与役割：" + isParticipantStatus)
   }, [isParticipantStatus])
+
+  // speaker（自分）がsideparticipantを見ていたらその番号を、それ以外は-1をskywayにおくる
+  useEffect(() => {
+    getSpeakerFace(speakerFace)
+  }, [speakerFace])
+
+  // もしSpeakerがSideParticipantを見ていたらその番号をSkywayClientに送る
+  const SpeakerFaceAddressee = () => {
+    if (isParticipantStatus == "speaker" && (participants[whoFace] == "sideparticipant" || participants[whoFace] == "addressee")) {
+      // console.log("私は"+isParticipantStatus+",参加者"+whoFace+":"+participants[whoFace]+"を見ています")
+      setSpeakerFace(whoFace)
+    }else{
+      setSpeakerFace(-1)
+    }
+  }
 
   // const OutputData = () => {
   //   const results = resultsRef.current as Results
@@ -138,6 +178,13 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, participants
     }
   }
 
+  const getIsSpeaker = () => {
+    if (isSpeaker == true) {
+      setCount(100)
+    }
+    setIsSpeaker((prev) => { return !(prev) });
+  }
+
   return (
     <>
       <div className={styles.container}>{/* capture */}
@@ -158,12 +205,15 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, participants
           {/* <button className={styles.button} onClick={OutputData}>
             Output Data
         </button> */}
-          
+
           <button onClick={InitHands}>
             Init Hand
           </button>
           <button onClick={ClickOnCalc}>
-          Calculate Non Verbal Language
+            Calculate Non Verbal Language
+          </button>
+          <button onClick={getIsSpeaker}>
+            Speaker or etc
           </button>
         </div>
       </div>

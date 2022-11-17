@@ -65,6 +65,8 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     const [isStarted, setIsStarted] = React.useState(false);
     const [localParSta,setLocalParSta] =React.useState("bystander");
     const [statusArray,setStatusArray] =React.useState<string[]>([]);
+    const [isAdd,setIsAdd] = React.useState<boolean>(false);
+    const [addData,setAddData] = React.useState<number>();
 
     // メディアデバイスからローカルのビデオ情報を取得する
     React.useEffect(() => {
@@ -90,6 +92,13 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     function getParticipantStatus(countstatus:string){
         setLocalParSta(countstatus)
     }
+    // MediaPipeScriptから送られてきた話し手の視線をRoomに送る
+    function getSpeakerFace(num:number){
+        // console.log(num)
+        if(room){
+            room.send(num);
+        }
+    }
 
     // 新規参加者がいたときにStreamを追加する
     const addRemoteStream = (stream:MediaStream,peerId:string,parsta:string) =>{
@@ -112,6 +121,19 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         });
     }
 
+    React.useEffect(() => {
+        changeIsAdd(addData,peer.current.id)
+    },[addData])
+
+    const changeIsAdd = (data:number|undefined,peerid:string) => {
+        // dataがnullでなく、-1でもなく（誰かしらが受け手）、それが自分である時
+        if(data != undefined && data != -1 && remoteVideo[data].peerId == peer.current.id){
+            setIsAdd(true)
+        }else{
+            setIsAdd(false)
+        }
+    }
+
     // RemoteVideoをPeerId昇順に設定
     const sortRemoteVideo=()=>{
         setRemoteVideo((prev)=>{
@@ -130,7 +152,6 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
         setStatusArray(remoteVideo.map((value)=>{
             return value.participantStatus
         }))
-        // console.log(statusArray)
     }
 
     React.useEffect(() => {
@@ -175,10 +196,17 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
                     room.send(localParSta);
                 }
             });
+
+            // dataの受信
             tmpRoom.on("data",({src,data}) => {
-                // data（参与役割）を受信したらsetRemoteVidoeを更新する
-                changeParticipantStatus(src,data);
+                if(typeof data == "number"){
+                    setAddData(data)
+                }else{
+                    // data（参与役割）を受信したらsetRemoteVidoeを更新する
+                    changeParticipantStatus(src,data);
+                }
             });
+
             tmpRoom.on("peerLeave",(peerId) => {
                 setRemoteVideo((prev) => {
                     return prev.filter((video) => {
@@ -220,7 +248,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     };
 
     const mediaPipeOn = () => {
-        return <MediaPipe  getParticipantStatus = {getParticipantStatus} participantsStatus ={statusArray}/>;
+        return <MediaPipe  getParticipantStatus = {getParticipantStatus} getSpeakerFace={getSpeakerFace} participantsStatus ={statusArray} addressee={isAdd}/>;
     }
 
     return (

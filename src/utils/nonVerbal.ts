@@ -11,6 +11,11 @@ import {faceNormalize} from './faceMesh';
     left: number;
 };
 
+export type CountAndDetection = {
+    nblCount:number;
+    faceDetection:number;
+}
+
 export const InitHand = (result:Results,conHands:InitiationHands):InitiationHands => {
     if(result.leftHandLandmarks){
         conHands.left = Math.sqrt(Math.pow(result.leftHandLandmarks[0].x - result.leftHandLandmarks[12].x, 2) + Math.pow(result.leftHandLandmarks[0].y - result.leftHandLandmarks[12].y, 2))
@@ -21,7 +26,7 @@ export const InitHand = (result:Results,conHands:InitiationHands):InitiationHand
     return conHands;
 }
 
-export const detectItem = (results: Results,count:number,hands: InitiationHands,nod:number[],participants:string[]):number => {
+export const detectItem = (results: Results,count:number,hands: InitiationHands,nod:number[],participants:string[]):CountAndDetection => {
     // console.log(participants)
     // 挙手判定
     // 左手
@@ -75,13 +80,12 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         if(deg < 0){
             deg = deg + 360
         }
-        console.log(deg)
         faceposition=whereFace(deg,participants.length)
 
         // 方向のテスト
         // faceposition=whereFace(deg,6)
         // let statusArray:string[] = ["sideparticipant","addressee","speaker","bystander","sideparticipant","bystander"]
-        console.log("参加者"+faceposition+"("+participants[faceposition]+")を向いています")
+        // console.log("参加者"+faceposition+"("+participants[faceposition]+")を向いています")
         
     }
 
@@ -104,7 +108,7 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         count = 0
     }
 
-    return count
+    return {nblCount:count,faceDetection:faceposition}
 }
 
 export const nodCount = (nod:number[]):boolean =>{

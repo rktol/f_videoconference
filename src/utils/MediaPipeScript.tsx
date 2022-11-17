@@ -14,7 +14,7 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFa
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const resultsRef = useRef<any>(null)
   const [isHands, setIsHands] = React.useState<InitiationHands>({ right: 1, left: 1 });
-  let nod = [0, 0, 0]
+  const [nod,setNod] = React.useState<number[]>( [0, 0, 0] );
   let [count, setCount] = React.useState<number>(0);
   let [isParticipantStatus, setIsParticipantStatus] = React.useState<string>("bystander")
   let [participants, setParticipants] = React.useState<string[]>([])
@@ -37,12 +37,14 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFa
 
   // onResultsでTmpResultsが変更されたときに毎回動き、countを算出して自らの参与役割を決定
   React.useEffect(() => {
-
+    
     // 頷きのためのnod関数
+    let nodtmp = nod
     if (tmpResults && tmpResults.faceLandmarks) {
-      nod.push(tmpResults.faceLandmarks[1].y)
-      nod.shift()
+      nodtmp.push(tmpResults.faceLandmarks[1].y)
+      nodtmp.shift()
     }
+    setNod(nodtmp)
 
 
     let conHands = isHands

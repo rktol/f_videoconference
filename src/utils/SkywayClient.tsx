@@ -75,7 +75,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
 
     const initLocalVideo = () =>{
         navigator.mediaDevices
-            .getUserMedia({ video: true})
+            .getUserMedia({ video: true,audio:true})
             .then((stream) => {
                 setLocalStream(stream);
                 if (localVideoRef.current){
@@ -243,7 +243,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     // remoteVideoに置かれている全ての要素でpopsとしてvideoとkeyとしてpeerIdを関数RemoteVideoに送る
     const castVideo = () => {
         return remoteVideo.map((video,index) => {
-            return <RemoteVideo video={video} index={index} length={remoteVideo.length}key={video.peerId} />; 
+            return <RemoteVideo video={video} index={index} length={remoteVideo.length}key={video.peerId}isMute={video.peerId == peer.current.id}/>; 
         });
     };
 
@@ -254,14 +254,6 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     return (
         <div>
             <div>
-                {/* <form>
-                    <select onChange={getParticipantStatus} defaultValue={localParSta} disabled={!isStarted}>
-                        <option value="speaker">話し手</option>
-                        <option value="addressee">受け手</option>
-                        <option value="sideparticipant">傍参加者</option>
-                        <option value="bystander">傍観者</option>
-                    </select>
-                </form> */}
                 <button onClick={() => onStart()} disabled={isStarted}>
                     start
                 </button>
@@ -269,7 +261,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
                 <button onClick={() => onEnd()} disabled={true}>
                     end
                 </button>
-                <MyVideo ref={localVideoRef} parsta={localParSta} num={1} len={1} style={{display:(isStarted?'none':'block')}} playsInline>
+                <MyVideo ref={localVideoRef} parsta={localParSta} num={1} len={1} style={{display:(isStarted?'none':'block')}} playsInline muted>
                 </MyVideo>
                 <Area>
                 {castVideo()}
@@ -282,7 +274,7 @@ export const Room: React.VFC<{roomId: string}> =({roomId}) => {
     );
 };
 
-const RemoteVideo = (props: {video: VideoStream,index:number,length:number}) => {
+const RemoteVideo = (props: {video: VideoStream,index:number,length:number,isMute:boolean}) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
 
     React.useEffect(() => {
@@ -291,5 +283,6 @@ const RemoteVideo = (props: {video: VideoStream,index:number,length:number}) => 
             videoRef.current.play().catch((e) => console.log(e));
         }
     },[props.video]);
-    return <MyVideo ref={videoRef} parsta={props.video.participantStatus} num={props.index} len={props.length} playsInline></MyVideo>
+
+    return <MyVideo ref={videoRef} parsta={props.video.participantStatus} num={props.index} len={props.length} playsInline muted={props.isMute}></MyVideo>
 };

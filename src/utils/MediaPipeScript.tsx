@@ -6,6 +6,7 @@ import { css } from '@emotion/css';
 import { Camera } from '@mediapipe/camera_utils';
 import { Holistic, Results, ResultsListener } from '@mediapipe/holistic';
 import { detectItem, InitHand, InitiationHands, CountAndDetection } from './nonVerbal';
+import SpeechRecognition,{useSpeechRecognition} from 'react-speech-recognition';
 
 // export const MediaPipe = (props: {parsta:string}) =>{
 export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFace: Function, participantsStatus: string[], addressee: boolean }> = ({ getParticipantStatus, getSpeakerFace, participantsStatus, addressee }) => {
@@ -23,11 +24,49 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFa
   const [speakerFace,setSpeakerFace] = React.useState<number>(-1)
   const [isSpeaker, setIsSpeaker] = React.useState<boolean>(false)
   const [isAddressee, setIsAddressee] = React.useState<boolean>(false)
+  const [FinishToSpeakCount,setFinishToSpeakCount] = React.useState<number>(0)
 
   /**
   * 検出結果（フレーム毎に呼び出される）
   * @param results
   */
+
+  const {
+    transcript,
+    listening,
+    finalTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  const Speech = () =>{
+
+    if (!browserSupportsSpeechRecognition) {
+      return <span>Browser doesn't support speech recognition.</span>;
+    }
+
+    SpeechRecognition.startListening({
+      continuous:false,
+      language: 'ja'
+    })
+
+  }
+
+  React.useEffect(() => {
+    SpeechRecognition.startListening({
+      continuous:false,
+      language: 'ja'
+    })
+    console.log(finalTranscript)
+  },[listening])
+
+  React.useEffect(() => {
+    if(transcript){
+      setIsSpeaker(true)
+      setCount(100)
+    }else{
+      setIsSpeaker(false)
+    }
+  },[transcript])
 
   // Holisticを起動したときにひたすら回り続ける
   const onResults: ResultsListener = (results: Results): void => {
@@ -85,7 +124,7 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFa
       }
       console.log("現在のスコア：" + count)
     }
-
+    
   }, [tmpResults])
 
   useEffect(() => {
@@ -178,14 +217,16 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFa
       camera.start()
 
     }
+
+    Speech()
   }
 
-  const getIsSpeaker = () => {
-    if (isSpeaker == true) {
-      setCount(100)
-    }
-    setIsSpeaker((prev) => { return !(prev) });
-  }
+  // const getIsSpeaker = () => {
+  //   if (isSpeaker == true) {
+  //     setCount(100)
+  //   }
+  //   setIsSpeaker((prev) => { return !(prev) });
+  // }
 
   return (
     <>
@@ -214,9 +255,12 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFa
           <button onClick={ClickOnCalc}>
             Calculate Non Verbal Language
           </button>
-          <button onClick={getIsSpeaker}>
+          {/* <button onClick={getIsSpeaker}>
             Speaker or etc
-          </button>
+          </button> */}
+          {/* <button onClick={Speech}>
+            音声認識
+          </button> */}
         </div>
       </div>
     </>

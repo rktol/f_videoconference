@@ -10,13 +10,13 @@ type VideoStream = {
     participantStatus: string;
 };
 
-const MyVideo = styled.video<{ parsta: string, num: number, len: number }>`
+const MyVideo = styled.video<{ parsta: string, num: number, len: number ,cond:number}>`
     position: absolute;
-    width: ${props => calcVideosize(props.parsta)};
+    width: ${props => calcVideosize(props.parsta,props.cond)};
     // 大きさ調整用コメント
     // width: 15%;
-    left: calc((50% - ${props => calcVideosize(props.parsta)}/2) + (${props => calcRadius(props.parsta)}*${props => calcSin(props.num, props.len)}));
-    top : calc((50% - ${props => calcVideosize(props.parsta)}/2) + (${props => calcRadius(props.parsta)}*${props => calcCos(props.num, props.len)}));
+    left: calc((50% - ${props => calcVideosize(props.parsta,props.cond)}/2) + (${props => calcRadius(props.parsta,props.cond)}*${props => calcSin(props.num, props.len)}));
+    top : calc((50% - ${props => calcVideosize(props.parsta,props.cond)}/2) + (${props => calcRadius(props.parsta,props.cond)}*${props => calcCos(props.num, props.len)}));
     clip-path:circle(35% at 50% 50%);
     // 角丸
     // border-radius: 30px;
@@ -52,25 +52,38 @@ export const calcSin = (num: number, len: number) => {
 }
 
 
-const calcRadius = (tmp: string) => {
-    if (tmp === 'bystander') {
-        return '45%';
-    } else {
-        return '25%';
+const calcRadius = (tmp: string,c:number) => {
+    if(c==0){
+        if (tmp === 'bystander') {
+            return '45%';
+        } else {
+            return '25%';
+        }
+    }else if(c==1 || c==2){
+        return '35%';
     }
 }
 
-const calcVideosize = (tmp: string) => {
+const calcVideosize = (tmp: string,c:number) => {
     // 個々の大きさをどうするか相談したい
-    switch (tmp) {
-        case 'speaker':
-            return '16%'
-        case 'addressee':
-            return '12%'
-        case 'sideparticipant':
-            return '8%'
-        default:
-            return '4%'
+    if(c==0 || c==1){
+        switch (tmp) {
+            case 'speaker':
+                return '16%'
+            case 'addressee':
+                return '12%'
+            case 'sideparticipant':
+                return '8%'
+            default:
+                return '4%'
+        }
+    }else if(c == 2){
+        switch (tmp) {
+            case 'speaker':
+                return '16%'
+            default:
+                return '8%'
+        }
     }
 }
 
@@ -87,6 +100,7 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
     const [isAdd, setIsAdd] = React.useState<boolean>(false);
     const [addData, setAddData] = React.useState<number>();
     const [myNumber,setMyNumber] = React.useState<number>(0);
+    const [condition,setCondition] = React.useState<number>(0);
 
     // メディアデバイスからローカルのビデオ情報を取得する
     React.useEffect(() => {
@@ -268,17 +282,28 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
     // remoteVideoに置かれている全ての要素でpopsとしてvideoとkeyとしてpeerIdを関数RemoteVideoに送る
     const castVideo = () => {
         return remoteVideo.map((video, index) => {
-            return <RemoteVideo video={video} index={index} length={remoteVideo.length} key={video.peerId} isMute={video.peerId == peer.current.id} />;
+            return <RemoteVideo video={video} index={index} length={remoteVideo.length} key={video.peerId} isMute={video.peerId == peer.current.id} condition={condition} />;
         });
     };
 
     const mediaPipeOn = () => {
-        return <MediaPipe getParticipantStatus={getParticipantStatus} getSpeakerFace={getSpeakerFace} participantsStatus={statusArray} addressee={isAdd} mynumber={myNumber} />;
+        return <MediaPipe getParticipantStatus={getParticipantStatus} getSpeakerFace={getSpeakerFace} participantsStatus={statusArray} addressee={isAdd} mynumber={myNumber} Condition={condition} />;
     }
+
+    const changeCondition = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+        const num = Number(event.target.value)
+        setCondition(num)
+    }
+
 
     return (
         <div>
             <div>
+                <select onChange={changeCondition} defaultValue={condition}>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
                 <button onClick={() => onStart()} disabled={isStarted}>
                     Call
                 </button>
@@ -287,12 +312,12 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
                     end
                 </button> */}
                 {/* 子コンポーネントに送りたい */}
-                <Circle></Circle>
+                {(condition == 0) && <Circle></Circle>}
                 {mediaPipeOn()}
 
                 {/* 描画 */}
                 
-                <MyVideo ref={localVideoRef} parsta={localParSta} num={1} len={1} style={{ display: (isStarted ? 'none' : 'block') }} playsInline muted>
+                <MyVideo ref={localVideoRef} parsta={localParSta} num={1} len={1} style={{ display: (isStarted ? 'none' : 'block') }} cond={condition} playsInline muted>
                 </MyVideo>
                 <Area>
                     {castVideo()}
@@ -302,7 +327,7 @@ export const Room: React.VFC<{ roomId: string }> = ({ roomId }) => {
     );
 };
 
-const RemoteVideo = (props: { video: VideoStream, index: number, length: number, isMute: boolean }) => {
+const RemoteVideo = (props: { video: VideoStream, index: number, length: number, isMute: boolean,condition:number }) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
 
     React.useEffect(() => {
@@ -312,5 +337,5 @@ const RemoteVideo = (props: { video: VideoStream, index: number, length: number,
         }
     }, [props.video]);
 
-    return <MyVideo ref={videoRef} parsta={props.video.participantStatus} num={props.index} len={props.length} playsInline muted={props.isMute}></MyVideo>
+    return <MyVideo ref={videoRef} parsta={props.video.participantStatus} num={props.index} len={props.length} cond={props.condition} playsInline muted={props.isMute}></MyVideo>
 };

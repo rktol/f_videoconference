@@ -49,7 +49,7 @@ type ScoreResult = {
 };
 
 // export const MediaPipe = (props: {parsta:string}) =>{
-export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFace: Function, participantsStatus: string[], addressee: boolean, mynumber:number }> = ({ getParticipantStatus, getSpeakerFace, participantsStatus, addressee,mynumber }) => {
+export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFace: Function, participantsStatus: string[], addressee: boolean, mynumber:number,Condition:number }> = ({ getParticipantStatus, getSpeakerFace, participantsStatus, addressee,mynumber,Condition }) => {
 
   const [myId,setMyId] = React.useState<number>(0);
   const [condition,setCondition] = React.useState<number>(0);
@@ -88,6 +88,10 @@ export const MediaPipe: React.VFC<{ getParticipantStatus: Function, getSpeakerFa
   const csvTalkRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
   const csvParstaRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
   const csvScoreRef = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
+
+  useEffect(()=> {
+    setCondition(Condition)
+  },[Condition])
 
   // 会話認識開始
   const {

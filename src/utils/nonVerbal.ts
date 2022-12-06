@@ -14,7 +14,16 @@ import {faceNormalize} from './faceMesh';
 export type CountAndDetection = {
     nblCount:number;
     faceDetection:number;
-}
+    Score:isScore;
+};
+
+export type isScore = {
+    LeftHand:boolean;
+    RightHand:boolean;
+    Mouth:boolean;
+    Nod:boolean;
+    GazeSpeeker:boolean;
+};
 
 export const InitHand = (result:Results,conHands:InitiationHands):InitiationHands => {
     if(result.leftHandLandmarks){
@@ -27,6 +36,7 @@ export const InitHand = (result:Results,conHands:InitiationHands):InitiationHand
 }
 
 export const detectItem = (results: Results,count:number,hands: InitiationHands,nod:number[],participants:string[]):CountAndDetection => {
+    let scoreCount:isScore = {LeftHand:false,RightHand:false,Mouth:false,Nod:false,GazeSpeeker:false};
     // console.log(participants)
     // 挙手判定
     // 左手
@@ -36,6 +46,7 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         if(hands.left - dist < 0.15){
             console.log("左手をあげています+10")
             count += 5
+            scoreCount.LeftHand = true
         }else{
             // console.log("LeftHand is around the face")
         }
@@ -49,6 +60,7 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         if(hands.right - dist < 0.15){
             console.log("右手をあげています+10")
             count += 5
+            scoreCount.RightHand = true
         }else{
             // console.log("RightHand is around the face")
         }
@@ -61,8 +73,9 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         if(results.faceLandmarks[14].y - results.faceLandmarks[13].y < 0.005){
             // console.log("Close Mouse")
         }else{
-            console.log("口があいています+3")
+            console.log("口があいています+1.5")
             count += 1.5
+            scoreCount.Mouth = true
         }
     }
 
@@ -94,13 +107,15 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         if(nodCount(nod)){
           count+= 15
           console.log("頷きました+15")
+          scoreCount.Nod = true
         }
     }
 
     // 仮置き参加メンバーの参与役割から視線を把握
     if(participants[faceposition] == "speaker"){
-        count = count + 1
+        count = count + 0.5
         console.log("Speakerを見ています")
+        scoreCount.GazeSpeeker = true
     }
     
     // 顔がない時にカウントを0にする
@@ -108,7 +123,7 @@ export const detectItem = (results: Results,count:number,hands: InitiationHands,
         count = 0
     }
 
-    return {nblCount:count,faceDetection:faceposition}
+    return {nblCount:count,faceDetection:faceposition,Score:scoreCount}
 }
 
 export const nodCount = (nod:number[]):boolean =>{

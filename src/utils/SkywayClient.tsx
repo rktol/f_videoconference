@@ -57,7 +57,7 @@ const calcRadius = (tmp: string,c:number) => {
         if (tmp === 'bystander') {
             return '45%';
         } else {
-            return '25%';
+            return '17.5%';
         }
     }else if(c==1 || c==2){
         return '35%';

@@ -1,0 +1,38 @@
+[[1]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(自分がちゃんと聞いていることが相手に伝わっているように感じた)
+
+            Error Df Df.res F value   Pr(>F)  
+1 condition Withn  2     22  4.2482 0.027537 *
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[2]]
+                 contrast estimate       SE df  t.ratio    p.value sig
+1 condition0 - condition1     3.75 3.192281 22 1.174709 0.48019310    
+2 condition0 - condition2     9.25 3.192281 22 2.897615 0.02186384   *
+3 condition1 - condition2     5.50 3.192281 22 1.722906 0.21925395    
+
+[[3]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 6.6452, df = 2, p-value = 0.03606
+
+
+[[4]]
+
+	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
+
+data:  value and index 
+
+  0     1    
+1 0.421 -    
+2 0.099 0.212
+
+P value adjustment method: bonferroni 
+

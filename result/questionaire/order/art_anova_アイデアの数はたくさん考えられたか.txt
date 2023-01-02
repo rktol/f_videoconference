@@ -1,0 +1,26 @@
+[[1]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(アイデアの数はたくさん考えられたか)
+
+        Error Df Df.res F value  Pr(>F)  
+1 order Withn  2     22  1.7658 0.19444  
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[2]]
+[1] "None"
+
+[[3]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 0.37838, df = 2, p-value = 0.8276
+
+
+[[4]]
+[1] "None"
+

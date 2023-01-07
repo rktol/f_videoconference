@@ -1,0 +1,37 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$mouthtime)
+W = 0.5926, p-value = 8.384e-09
+
+
+[[2]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(mouthtime)
+
+            Error Df Df.res F value  Pr(>F)  
+1 condition Withn  2     22 0.28718 0.75315  
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[3]]
+[1] "None"
+
+[[4]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 1.0833, df = 2, p-value = 0.5818
+
+
+[[5]]
+[1] "None"
+
+[[6]]
+NULL
+

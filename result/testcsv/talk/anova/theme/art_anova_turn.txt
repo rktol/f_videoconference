@@ -1,0 +1,40 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$turn)
+W = 0.96566, p-value = 0.3191
+
+
+[[2]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(turn)
+
+        Error Df Df.res F value   Pr(>F)  
+1 theme Withn  2     22  4.2467 0.027567 *
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[3]]
+       contrast  estimate       SE df    t.ratio    p.value sig
+1 レンガ - 靴下 -5.458333 2.892268 22 -1.8872156 0.16601935    
+2   レンガ - 鍋 -8.291667 2.892268 22 -2.8668389 0.02339995   *
+3     靴下 - 鍋 -2.833333 2.892268 22 -0.9796233 0.59707806    
+
+[[4]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 2.8, df = 2, p-value = 0.2466
+
+
+[[5]]
+[1] "None"
+
+[[6]]
+NULL
+

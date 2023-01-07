@@ -1,0 +1,40 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$count)
+W = 0.94399, p-value = 0.06769
+
+
+[[2]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(count)
+
+        Error Df Df.res F value   Pr(>F)  
+1 order Withn  2     22  4.7591 0.019164 *
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[3]]
+         contrast  estimate       SE df   t.ratio    p.value sig
+1 order1 - order2 -1.583333 2.166958 22 -0.730671 0.74816387    
+2 order1 - order3 -6.416667 2.166958 22 -2.961140 0.01898754   *
+3 order2 - order3 -4.833333 2.166958 22 -2.230469 0.08804936   .
+
+[[4]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 0.16667, df = 2, p-value = 0.92
+
+
+[[5]]
+[1] "None"
+
+[[6]]
+NULL
+

@@ -1,0 +1,49 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$collision_prob)
+W = 0.9612, p-value = 0.2341
+
+
+[[2]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(collision_prob)
+
+            Error Df Df.res F value   Pr(>F)  
+1 condition Withn  2     22  5.4202 0.012195 *
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[3]]
+                 contrast  estimate       SE df   t.ratio    p.value sig
+1 condition0 - condition1 -3.833333 2.638105 22 -1.453063 0.33220597    
+2 condition0 - condition2 -8.666667 2.638105 22 -3.285187 0.00909529  **
+3 condition1 - condition2 -4.833333 2.638105 22 -1.832123 0.18260747    
+
+[[4]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 6, df = 2, p-value = 0.04979
+
+
+[[5]]
+
+	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
+
+data:  value and index 
+
+  0     1    
+1 0.509 -    
+2 0.026 0.440
+
+P value adjustment method: bonferroni 
+
+[[6]]
+NULL
+

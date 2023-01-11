@@ -1,0 +1,43 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$傍参加者の後に傍観者であったか)
+W = 0.67889, p-value = 1.779e-07
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$傍参加者の後に傍観者であったか by order
+Bartlett's K-squared = 3.7217, df = 2, p-value = 0.1555
+
+
+[[3]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(傍参加者の後に傍観者であったか)
+
+        Error Df Df.res F value  Pr(>F)  
+1 order  name  1     10  3.0449 0.11158  
+2 order Withn  2     21  1.5553 0.23449  
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[4]]
+[1] "None"
+
+[[5]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 1, df = 2, p-value = 0.6065
+
+
+[[6]]
+[1] "None"
+

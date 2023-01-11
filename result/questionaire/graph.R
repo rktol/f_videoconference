@@ -2,6 +2,7 @@ library(outliers)
 source("http://aoki2.si.gunma-u.ac.jp/R/src/SG.R", encoding = "euc-jp")
 library(ARTool)
 library("tidyverse")
+library(ggplot2)
 library(grid)
 
 d <- read.csv("./answer.csv", header = TRUE, fileEncoding = "utf8")
@@ -17,6 +18,20 @@ order = c(1,3,2,1,3,2)
 
 tmp <- list(NULL,NULL,NULL)
 names(tmp) <- c("theme","order","group")
+
+k <- length(d$condition)
+
+for(n in 1:k){
+    if(d$condition[n]==0){
+        d$condition[n] <- "サイズ＋配置"
+    }else if(d$condition[n]==1){
+        d$condition[n] <- "サイズ"
+    }else if(d$condition[n]==2){
+        d$condition[n] <- "話し手強調"
+    }
+}
+
+
 
 
 for (n in 1:6){
@@ -36,6 +51,8 @@ d$group <- factor(d$group)
 d$order <- factor(d$order)
 d$name <- factor(d$name)
 
+d <- transform(d, condition=factor(condition, levels=c("サイズ＋配置","サイズ","話し手強調")))
+
 name <- names(d)
 
 pointlimits <- c(0,0,0,10,10,10,10,5,5,5,5,5,5,5,5,5,5)
@@ -48,15 +65,35 @@ for(m in c(3,18,19)){
 # for(m in c(3)){
     for(n in 4:17){
         title <- name[[n]]
+        titledata <- title
         d %>%
             ggplot(aes_string(x=name[[m]],y=title,fill = name[[m]])) +
             geom_boxplot() +
+            ylab("")+
             ggtitle(title) +
             scale_y_continuous(n.breaks = pointlimits[n], limits = c(1,pointlimits[n]))
         ggsave(sprintf("%s/boxplot_%s.png",name[[m]],title))
 
+        eval(parse(text=paste("xx <- group_by(d,",name[[m]],")")))
+        eval(parse(text=paste("xx <- summarise(xx,mean=mean(",title,"),sd=sd(",title,"))")))
+        
+
+        # d %>%
+        # xx %>%
+        #     ggplot(aes_string(x=name[[m]], y="mean", fill = name[[m]])) + 
+        #     geom_bar(stat="identity") +
+        #     geom_errorbar(aes(ymax = mean + sd, ymin = mean - sd, width = 0.2), position = position_dodge(0.9), size = 0.75 )+
+        #     ylab("")+
+        #     ggtitle(title)
+        # # + scale_y_continuous(n.breaks = pointlimits[n], limits = c(1,pointlimits[n]))
+        # # ggsave(sprintf("%s/bar_%s.png",name[[m]],title))
+        # ggsave(sprintf("%s/bar_mean_%s.png",name[[m]],title))
+
         # 正規性のshapiro-wilk検定
         # eval(parse(text=paste("shapiro <- append(shapiro,list(shapiro.test(t(d$",title,"))))")))
+
+        eval(parse(text=paste("shapiro <- shapiro.test(t(d$",title,"))")))
+        eval(parse(text=paste("bartlett <- bartlett.test(d$",title," ~ ",name[[m]],", data = d)")))
 
         # artした後にanova
         eval(parse(text=paste("henkan <- art(",title," ~ ",name[m]," + Error(name), data = d)")))
@@ -80,10 +117,10 @@ for(m in c(3,18,19)){
 
         # friedman -> Bonferroni
         # dataの整形
-        spreaddata <- list(d$name,d$condition,d[[n]])
-        names(spreaddata) <- c("name","condition",title)
+        spreaddata <- list(d$name,d[[m]],d[[n]])
+        names(spreaddata) <- c("name",name[[m]],title)
         spreaddata <- data.frame(spreaddata)
-        eval(parse(text=paste("spreaddata <- spreaddata %>% tidyr::spread(key = condition,value=",title,")")))
+        eval(parse(text=paste("spreaddata <- spreaddata %>% tidyr::spread(key = ",name[[m]],",value=",title,")")))
         spreaddata <- spreaddata[,-1]
         friedman_res <- friedman.test(as.matrix(spreaddata))
 
@@ -98,12 +135,15 @@ for(m in c(3,18,19)){
         }else{
             Bon_res <- "None"
         }
-
-        out <- append(list(henkan_res), list(art_res))
+        out <- append(list(shapiro),list(bartlett))
+        out <- append(out,list(henkan_res))
+        out <- append(out, list(art_res))
         out <- append(out,list(friedman_res))
         out <- append(out,list(Bon_res))
 
-        capture.output(out, file = sprintf("%s/art_anova_%s.txt",name[m],title))
+        # capture.output(anovakun(spreaddata, "sA", 3, holm = T, mau = T, eta = T), file = sprintf("%s/anova_%s.txt",name[m],title))
+
+        # capture.output(out, file = sprintf("%s/art_anova_%s.txt",name[m],title))
 
     }
 }

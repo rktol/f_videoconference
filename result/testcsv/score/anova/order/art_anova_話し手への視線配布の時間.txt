@@ -1,0 +1,54 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$話し手への視線配布の時間)
+W = 0.99001, p-value = 0.9826
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$話し手への視線配布の時間 by order
+Bartlett's K-squared = 0.055944, df = 2, p-value = 0.9724
+
+
+[[3]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(話し手への視線配布の時間)
+
+        Error Df Df.res F value   Pr(>F)  
+1 order Withn  2     22  5.1043 0.015099 *
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[4]]
+         contrast estimate      SE df    t.ratio    p.value sig
+1 order1 - order2    -9.25 3.43684 22 -2.6914259 0.03425594   *
+2 order1 - order3     0.50 3.43684 22  0.1454825 0.98840553    
+3 order2 - order3     9.75 3.43684 22  2.8369084 0.02499024   *
+
+[[5]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 7.1667, df = 2, p-value = 0.02778
+
+
+[[6]]
+
+	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
+
+data:  value and index 
+
+           サイズ＋配置 サイズ
+サイズ     0.509        -     
+話し手強調 0.062        0.233 
+
+P value adjustment method: bonferroni 
+

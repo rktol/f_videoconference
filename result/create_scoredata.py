@@ -6,6 +6,7 @@ import numpy as np
 
 groups = ["1", "2"]
 condition = ["0","1", "2"]
+conditionname = ["サイズ＋配置","サイズ","話し手強調"]
 id = ["0","1", "2", "3","4","5"]
 names = [["yokoyama","tsunoda","tamura","konishi","ishibashi","ichikawa"],["ohyama","sugiyama","suzuki","sei","tanokashira","nishikawa"]]
 theme = [["レンガ","靴下","鍋"],["鍋","レンガ","靴下",]]
@@ -37,7 +38,7 @@ for g_index,group in enumerate(groups):
                 alldata[g_index][n_index].append(data)
 
 
-testdata = [["name","group","condition","theme","order","count","lefthand","lefthandtime","righthand","righthandtime","mouth","mouthtime","nod","gazespeaker"]]
+testdata = [["name","group","condition","theme","order","count","lefthand","lefthandtime","righthand","righthandtime","開口回数","開口時間","頷き回数","話し手への視線配布の時間"]]
 for index_gd,groupdata in enumerate(alldata):
     for index_nd,namedata in enumerate(groupdata):
         for index_cd,conditiondata in enumerate(namedata):
@@ -97,7 +98,7 @@ for index_gd,groupdata in enumerate(alldata):
             count  = count / len(conditiondata)
             tmpdata.append(names[index_gd][index_nd])
             tmpdata.append(groups[index_gd])
-            tmpdata.append(condition[index_cd])
+            tmpdata.append(conditionname[index_cd])
             tmpdata.append(theme[index_gd][index_cd])
             tmpdata.append(order[index_gd][index_cd])
             tmpdata.append(float(count))

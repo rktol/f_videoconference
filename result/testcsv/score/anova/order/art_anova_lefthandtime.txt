@@ -7,6 +7,14 @@ W = 0.39286, p-value = 4.689e-11
 
 
 [[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$lefthandtime by order
+Bartlett's K-squared = 35.617, df = 2, p-value = 1.845e-08
+
+
+[[3]]
 Analysis of Variance of Aligned Rank Transformed Data
 
 Table Type: Repeated Measures Analysis of Variance Table (Type I) 
@@ -18,10 +26,10 @@ Response: art(lefthandtime)
 ---
 Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-[[3]]
+[[4]]
 [1] "None"
 
-[[4]]
+[[5]]
 
 	Friedman rank sum test
 
@@ -29,9 +37,6 @@ data:  as.matrix(spreaddata)
 Friedman chi-squared = 1.625, df = 2, p-value = 0.4437
 
 
-[[5]]
-[1] "None"
-
 [[6]]
-NULL
+[1] "None"
 

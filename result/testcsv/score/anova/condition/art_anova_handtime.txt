@@ -1,0 +1,42 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$handtime)
+W = 0.63346, p-value = 2.957e-08
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$handtime by condition
+Bartlett's K-squared = 6.9583, df = 2, p-value = 0.03083
+
+
+[[3]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(handtime)
+
+            Error Df Df.res F value  Pr(>F)  
+1 condition Withn  2     22  1.3334 0.28407  
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[4]]
+[1] "None"
+
+[[5]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 2.3871, df = 2, p-value = 0.3031
+
+
+[[6]]
+[1] "None"
+

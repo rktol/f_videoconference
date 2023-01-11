@@ -1,4 +1,20 @@
 [[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$他の人が話し終えるとき.自分が話すべきかがわかった)
+W = 0.87444, p-value = 0.0007334
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$他の人が話し終えるとき.自分が話すべきかがわかった by theme
+Bartlett's K-squared = 1.7945, df = 2, p-value = 0.4077
+
+
+[[3]]
 Analysis of Variance of Aligned Rank Transformed Data
 
 Table Type: Repeated Measures Analysis of Variance Table (Type I) 
@@ -10,26 +26,17 @@ Response: art(他の人が話し終えるとき.自分が話すべきかがわ�
 ---
 Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-[[2]]
+[[4]]
 [1] "None"
 
-[[3]]
+[[5]]
 
 	Friedman rank sum test
 
 data:  as.matrix(spreaddata)
-Friedman chi-squared = 5.4074, df = 2, p-value = 0.06696
+Friedman chi-squared = 2.2963, df = 2, p-value = 0.3172
 
 
-[[4]]
-
-	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
-
-data:  value and index 
-
-  0    1   
-1 0.61 -   
-2 0.37 1.00
-
-P value adjustment method: bonferroni 
+[[6]]
+[1] "None"
 

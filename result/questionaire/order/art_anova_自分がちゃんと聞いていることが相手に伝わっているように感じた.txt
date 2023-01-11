@@ -1,4 +1,20 @@
 [[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$自分がちゃんと聞いていることが相手に伝わっているように感じた)
+W = 0.90108, p-value = 0.003652
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$自分がちゃんと聞いていることが相手に伝わっているように感じた by order
+Bartlett's K-squared = 0.5178, df = 2, p-value = 0.7719
+
+
+[[3]]
 Analysis of Variance of Aligned Rank Transformed Data
 
 Table Type: Repeated Measures Analysis of Variance Table (Type I) 
@@ -10,29 +26,29 @@ Response: art(自分がちゃんと聞いていることが相手に伝わって
 ---
 Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-[[2]]
+[[4]]
          contrast   estimate       SE df    t.ratio    p.value sig
 1 order1 - order2  8.9166667 3.117035 22  2.8606242 0.02372216   *
 2 order1 - order3  8.0833333 3.117035 22  2.5932762 0.04219712   *
 3 order2 - order3 -0.8333333 3.117035 22 -0.2673481 0.96143399    
 
-[[3]]
+[[5]]
 
 	Friedman rank sum test
 
 data:  as.matrix(spreaddata)
-Friedman chi-squared = 6.6452, df = 2, p-value = 0.03606
+Friedman chi-squared = 6.2581, df = 2, p-value = 0.04376
 
 
-[[4]]
+[[6]]
 
 	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
 
 data:  value and index 
 
-  0     1    
-1 0.421 -    
-2 0.099 0.212
+  1     2    
+2 0.058 -    
+3 0.227 1.000
 
 P value adjustment method: bonferroni 
 

@@ -8,6 +8,7 @@ import numpy as np
 
 groups = ["1", "2"]
 condition = ["0","1", "2"]
+conditionname = ["サイズ＋配置","サイズ","話し手強調"]
 id = ["0","1", "2", "3","4","5"]
 names = [["yokoyama","tsunoda","tamura","konishi","ishibashi","ichikawa"],["ohyama","sugiyama","suzuki","sei","tanokashira","nishikawa"]]
 theme = [["レンガ","靴下","鍋"],["鍋","レンガ","靴下",]]
@@ -38,7 +39,7 @@ for g_index,group in enumerate(groups):
 
 
 name_init = [{"yokoyama":0,"tsunoda":0,"tamura":0,"konishi":0,"ishibashi":0,"ichikawa":0},{"ohyama":0,"sugiyama":0,"suzuki":0,"sei":0,"tanokashira":0,"nishikawa":0}]
-testdata = [["name","group","condition","theme","order","turn","talktime","turntaking","collision_a","collision_b","silent"]]
+testdata = [["name","group","condition","theme","order","発話数","talktime","話者交替数","発話衝突Aの回数","発話衝突Bの回数","沈黙時間"]]
 for index_a,a in enumerate(alldata):
     for index_log,log in enumerate(a):
 
@@ -86,7 +87,7 @@ for index_a,a in enumerate(alldata):
             tmpdata = []
             tmpdata.append(name)
             tmpdata.append(groups[index_a])
-            tmpdata.append(condition[index_log])
+            tmpdata.append(conditionname[index_log])
             tmpdata.append(theme[index_a][index_log])
             tmpdata.append(order[index_a][index_log])
             tmpdata.append(float(turn[name]))

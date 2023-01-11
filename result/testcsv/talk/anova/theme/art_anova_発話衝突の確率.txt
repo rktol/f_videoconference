@@ -1,0 +1,51 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$発話衝突の確率)
+W = 0.9612, p-value = 0.2341
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$発話衝突の確率 by theme
+Bartlett's K-squared = 3.1685, df = 2, p-value = 0.2051
+
+
+[[3]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(発話衝突の確率)
+
+        Error Df Df.res F value  Pr(>F)  
+1 theme Withn  2     22 0.23486 0.79264  
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[4]]
+[1] "None"
+
+[[5]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 6, df = 2, p-value = 0.04979
+
+
+[[6]]
+
+	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
+
+data:  value and index 
+
+           サイズ＋配置 サイズ
+サイズ     0.509        -     
+話し手強調 0.026        0.440 
+
+P value adjustment method: bonferroni 
+

@@ -1,0 +1,16 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$沈黙時間)
+W = 0.93882, p-value = 0.6497
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$沈黙時間 by condition
+Bartlett's K-squared = 0.64352, df = 2, p-value = 0.7249
+
+

@@ -7,6 +7,14 @@ W = 0.67889, p-value = 1.779e-07
 
 
 [[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$SideparticipantAfterBystander by theme
+Bartlett's K-squared = 1.5987, df = 2, p-value = 0.4496
+
+
+[[3]]
 Analysis of Variance of Aligned Rank Transformed Data
 
 Table Type: Repeated Measures Analysis of Variance Table (Type I) 
@@ -19,10 +27,10 @@ Response: art(SideparticipantAfterBystander)
 ---
 Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-[[3]]
+[[4]]
 [1] "None"
 
-[[4]]
+[[5]]
 
 	Friedman rank sum test
 
@@ -30,9 +38,6 @@ data:  as.matrix(spreaddata)
 Friedman chi-squared = 1, df = 2, p-value = 0.6065
 
 
-[[5]]
-[1] "None"
-
 [[6]]
-NULL
+[1] "None"
 

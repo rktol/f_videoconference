@@ -1,4 +1,20 @@
 [[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$アイデアの数はたくさん考えられたか)
+W = 0.90971, p-value = 0.006355
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$アイデアの数はたくさん考えられたか by order
+Bartlett's K-squared = 1.364, df = 2, p-value = 0.5056
+
+
+[[3]]
 Analysis of Variance of Aligned Rank Transformed Data
 
 Table Type: Repeated Measures Analysis of Variance Table (Type I) 
@@ -10,17 +26,26 @@ Response: art(アイデアの数はたくさん考えられたか)
 ---
 Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-[[2]]
+[[4]]
 [1] "None"
 
-[[3]]
+[[5]]
 
 	Friedman rank sum test
 
 data:  as.matrix(spreaddata)
-Friedman chi-squared = 0.37838, df = 2, p-value = 0.8276
+Friedman chi-squared = 4.9189, df = 2, p-value = 0.08548
 
 
-[[4]]
-[1] "None"
+[[6]]
+
+	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
+
+data:  value and index 
+
+  1    2   
+2 0.36 -   
+3 0.91 0.99
+
+P value adjustment method: bonferroni 
 

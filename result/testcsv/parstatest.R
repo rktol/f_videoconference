@@ -16,6 +16,8 @@ d$name <- factor(d$name)
 
 # d <- mutate(d, collision_prob = (collision_a+collision_b) / turn)
 
+d <- transform(d, condition=factor(condition, levels=c("サイズ＋配置","サイズ","話し手強調")))
+
 name <- names(d)
 
 
@@ -27,24 +29,33 @@ for (m in c(3, 4, 5)) {
     # for(m in c(3)){
     for (n in 6:10) {
         title <- name[[n]]
-        # d %>%
-        #     ggplot(aes_string(x = name[[m]], y = title, fill = name[[m]])) +
-        #     geom_boxplot() +
-        #     ggtitle(title)
-        # ggsave(sprintf("graph/parsta/%s/boxplot_%s.png",name[[m]],title))
-
-
         d %>%
-            ggplot(aes_string(x=name[[m]], y=title, fill = name[[m]])) + 
-            geom_bar(stat="identity") +
+            ggplot(aes_string(x = name[[m]], y = title, fill = name[[m]])) +
+            geom_boxplot() +
+            ylab("")+
             ggtitle(title)
-        ggsave(sprintf("graph/parsta/%s/bar_%s.png",name[[m]],title))
+        ggsave(sprintf("graph/parsta/%s/boxplot_%s.png",name[[m]],title))
+
+
+        eval(parse(text=paste("xx <- group_by(d,",name[[m]],")")))
+        eval(parse(text=paste("xx <- summarise(xx,mean=mean(",title,"),sd=sd(",title,"))")))
+        
+
+        # # d %>%
+        # xx %>%
+        #     ggplot(aes_string(x=name[[m]], y="mean", fill = name[[m]])) + 
+        #     geom_bar(stat="identity") +
+        #     geom_errorbar(aes(ymax = mean + sd, ymin = mean - sd, width = 0.2), position = position_dodge(0.9), size = 0.75 )+
+        #     ylab("")+
+        #     ggtitle(title)
+        # ggsave(sprintf("graph/parsta/%s/bar_mean_%s.png",name[[m]],title))
 
         # + scale_y_continuous(n.breaks = pointlimits[n], limits = c(1,pointlimits[n]))
  
 
         # 正規性のshapiro-wilk検定
         eval(parse(text=paste("shapiro <- shapiro.test(t(d$",title,"))")))
+        eval(parse(text=paste("bartlett <- bartlett.test(d$",title," ~ ",name[[m]],", data = d)")))
 
         # artした後にanova
         eval(parse(text=paste("henkan <- art(",title," ~ ",name[m]," + Error(name), data = d)")))
@@ -89,12 +100,14 @@ for (m in c(3, 4, 5)) {
 
         # anovakun_res <- anovakun(spreaddata, "sA", 3, holm = T, mau = T, eta = T)
 
-        out <- append(list(shapiro),list(henkan_res))
+        out <- append(list(shapiro),list(bartlett))
+        out <- append(out,list(henkan_res))
         out <- append(out, list(art_res))
         out <- append(out,list(friedman_res))
         out <- append(out,list(Bon_res))
-        out <- append(out,list(anovakun(spreaddata, "sA", 3, holm = T, mau = T, eta = T)))
 
         capture.output(out, file = sprintf("parsta/anova/%s/art_anova_%s.txt",name[m],title))
+        capture.output(anovakun(spreaddata, "sA", 3, holm = T, mau = T, eta = T), file = sprintf("parsta/anova/%s/anova_%s.txt",name[m],title))
+
     }
 }

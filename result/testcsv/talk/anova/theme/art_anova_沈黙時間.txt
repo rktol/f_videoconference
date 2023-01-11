@@ -1,0 +1,42 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$沈黙時間)
+W = 0.92494, p-value = 0.01762
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$沈黙時間 by theme
+Bartlett's K-squared = 0.63331, df = 2, p-value = 0.7286
+
+
+[[3]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(沈黙時間)
+
+        Error Df Df.res F value  Pr(>F)  
+1 theme Withn  2     22 0.02709 0.97331  
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[4]]
+[1] "None"
+
+[[5]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 0.16667, df = 2, p-value = 0.92
+
+
+[[6]]
+[1] "None"
+

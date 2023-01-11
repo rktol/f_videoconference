@@ -1,0 +1,45 @@
+[[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$話者交替数)
+W = 0.96626, p-value = 0.3323
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$話者交替数 by condition
+Bartlett's K-squared = 3.3681, df = 2, p-value = 0.1856
+
+
+[[3]]
+Analysis of Variance of Aligned Rank Transformed Data
+
+Table Type: Repeated Measures Analysis of Variance Table (Type I) 
+Model: Repeated Measures (aov)
+Response: art(話者交替数)
+
+            Error Df Df.res F value   Pr(>F)  
+1 condition Withn  2     22  3.1038 0.064957 .
+---
+Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+[[4]]
+                   contrast estimate       SE df    t.ratio    p.value sig
+1     サイズ＋配置 - サイズ    0.875 3.176768 22  0.2754372 0.95911879    
+2 サイズ＋配置 - 話し手強調   -6.375 3.176768 22 -2.0067564 0.13414851    
+3       サイズ - 話し手強調   -7.250 3.176768 22 -2.2821936 0.07958046   .
+
+[[5]]
+
+	Friedman rank sum test
+
+data:  as.matrix(spreaddata)
+Friedman chi-squared = 3.3043, df = 2, p-value = 0.1916
+
+
+[[6]]
+[1] "None"
+

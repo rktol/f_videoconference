@@ -1,4 +1,20 @@
 [[1]]
+
+	Shapiro-Wilk normality test
+
+data:  t(d$自分が話し終えるとき.話したくない人がわかった)
+W = 0.90799, p-value = 0.005682
+
+
+[[2]]
+
+	Bartlett test of homogeneity of variances
+
+data:  d$自分が話し終えるとき.話したくない人がわかった by theme
+Bartlett's K-squared = 3.2324, df = 2, p-value = 0.1987
+
+
+[[3]]
 Analysis of Variance of Aligned Rank Transformed Data
 
 Table Type: Repeated Measures Analysis of Variance Table (Type I) 
@@ -10,29 +26,29 @@ Response: art(自分が話し終えるとき.話したくない人がわかっ�
 ---
 Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-[[2]]
+[[4]]
        contrast  estimate       SE df    t.ratio    p.value sig
 1 レンガ - 靴下 -3.583333 3.701453 22 -0.9680882 0.60415233    
 2   レンガ - 鍋  6.833333 3.701453 22  1.8461216 0.17827477    
 3     靴下 - 鍋 10.416667 3.701453 22  2.8142098 0.02626294   *
 
-[[3]]
+[[5]]
 
 	Friedman rank sum test
 
 data:  as.matrix(spreaddata)
-Friedman chi-squared = 6.4667, df = 2, p-value = 0.03943
+Friedman chi-squared = 5.2667, df = 2, p-value = 0.07184
 
 
-[[4]]
+[[6]]
 
 	Pairwise comparisons using Wilcoxon signed rank test with continuity correction 
 
 data:  value and index 
 
-  0     1    
-1 0.121 -    
-2 0.098 1.000
+     レンガ 靴下 
+靴下 1.000  -    
+鍋   0.270  0.098
 
 P value adjustment method: bonferroni 
 
